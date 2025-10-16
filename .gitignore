@@ -129,3 +129,14 @@ dist
 build
 .strapi-updater.json
 .strapi-cloud.json
+ 
+############################
+# Personal (local-only)
+############################
+
+# Notes perso
+NOTES_PERSO.md
+
+# Règles Cursor personnelles (non versionnées)
+.cursorrules.user
+@.cursorrules.user
