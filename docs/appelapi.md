@@ -12,7 +12,7 @@ https://api.themoviedb.org/3/search/movie?api_key=...&language=fr-FR&query=Matri
 
 Je récupère le résultat, puis :
 
-- j’ajoute le film dans ma table `film`z
+- j'ajoute le film dans ma table `film`
 - j’appelle `/movie/{id}/credits` pour récupérer le casting
 - pour chaque acteur, j’appelle `/person/{id}?api_key=TA_CLE_API&language=fr-FR` pour récupérer ses détails (bio, photo, etc.)
 - j’ajoute les acteurs et leurs liaisons dans la base
