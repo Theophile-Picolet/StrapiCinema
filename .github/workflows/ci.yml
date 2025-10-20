@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,14 +18,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
+      #  Cache npm
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      #  Install
       - name: Install dependencies
         run: npm ci
 
+      #  Cache du build Strapi
+      - name: Cache Strapi build
+        uses: actions/cache@v3
+        with:
+          path: |
+            .cache
+            build
+          key: strapi-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            strapi-${{ runner.os }}-
+
+      #  Vérifie les types
       - name: Type check
         run: npx tsc -noEmit
-
+      
+      #  Vérifie la qualité du code (ESLint)
+      - name: Lint code
+        run: npm run lint
+      
+      #  Build Strapi
       - name: Build Strapi project
         run: npm run build
-
