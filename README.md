@@ -1,61 +1,97 @@
-# 🚀 Getting started with Strapi
+#  CineVerse - API Strapi Cinema
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+<p align="center">
+  <a href="https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml">
+    <img src="https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml/badge.svg?branch=dev&style=flat-square" alt="CI Status" />
+  </a>
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D20.0.0-brightgreen?logo=nodedotjs&logoColor=white&style=flat-square" alt="Node.js Version" />
+  <img src="https://img.shields.io/badge/Strapi-v4-blue?logo=strapi&logoColor=white&style=flat-square" alt="Strapi Version" />
+  <img src="https://img.shields.io/badge/Build-ready-orange?logo=githubactions&logoColor=white&style=flat-square" alt="Build Status" />
+</p>
 
-### `develop`
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+## Contexte du projet
 
-```
+###  Formation CDA - Éco-conception
+
+Ce projet s'inscrit dans le cadre de la formation **Concepteur Développeur d'Applications (CDA)** avec une approche **éco-conception**. L'objectif est de développer une solution technique performante tout en minimisant l'impact environnemental du système.
+
+###  Mission CineVerse
+
+La société **CineVerse** souhaite moderniser la gestion de son catalogue de films et d'acteurs. Jusqu'ici, les données étaient dispersées entre plusieurs outils non connectés. L'entreprise souhaite désormais disposer d'un système centralisé et automatisé capable d'importer des données depuis une source publique (TMDb), de les gérer dans une base locale, et de les exposer via une API interne sécurisée.
+
+Les développeurs sont chargés de concevoir ce système en utilisant **Strapi** comme CMS headless, et en garantissant la qualité, la cohérence et la sécurité des échanges de données.
+
+##  Objectifs
+
+L'équipe de développement devra :
+
+- ✅ Installer et configurer un projet Strapi
+- ✅ Créer deux modèles de données : **Movie** et **Actor** avec relations
+- ✅ Consommer l'API externe TMDb pour récupérer films et acteurs
+- ✅ Documenter toutes les requêtes API utilisées (REST)
+- ✅ Sécuriser l'accès à l'API (authentification par token)
+- ✅ Tester et valider les endpoints avec différents outils
+- ✅ Présenter le projet final et la documentation technique complète
+
+##  Fonctionnalités clés
+
+- **Gestion des films** : CRUD complet avec métadonnées TMDb
+- **Gestion des acteurs** : Profils détaillés avec filmographie  
+- **Import automatique** : Synchronisation avec l'API TMDb
+- **API sécurisée** : Authentification JWT et gestion des rôles
+- **Interface admin** : Back-office Strapi pour la gestion
+- **Documentation** : API complètement documentée et testée
+
+##  Démarrage rapide
+
+```bash
+# Installation
+npm install
+
+# Configuration
+cp .env.example .env
+# Éditer .env avec vos configurations
+
+# Démarrage
 npm run develop
-# or
-yarn develop
 ```
 
-### `start`
+L'application sera accessible sur `http://localhost:1337`
 
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
+>  **Guide d'installation détaillé** : Voir [docs/INSTALLATION.md](docs/INSTALLATION.md)
 
-```
-npm run start
-# or
-yarn start
-```
+##  Documentation technique
 
-### `build`
+- **[Modèle de base de données](docs/MODELE_BDD.md)** - Schéma complet avec diagrammes Mermaid
+- **[Guide d'installation](docs/INSTALLATION.md)** - Configuration détaillée
 
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
+
+##  Architecture du projet
 
 ```
-npm run build
-# or
-yarn build
+StrapiCinema/
+├── src/
+│   ├── api/                 # Modèles Strapi (Movie, Actor, etc.)
+│   ├── components/          # Composants partagés
+│   └── extensions/          # Extensions personnalisées
+├── docs/                    # Documentation technique
+├── scripts/                 # Scripts d'import TMDb
+└── public/                  # Fichiers statiques
 ```
 
-## ⚙️ Deployment
+##  Fonctionnalités principales
 
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+- **Gestion des films** : CRUD complet avec métadonnées TMDb
+- **Gestion des acteurs** : Profils détaillés avec filmographie
+- **Import automatique** : Synchronisation avec l'API TMDb
+- **API sécurisée** : Authentification JWT et gestion des rôles
+- **Interface admin** : Back-office Strapi pour la gestion
 
-```
-yarn strapi deploy
-```
 
-## 📚 Learn more
+## 👥 Équipe
 
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
+- **Développeur** : [Théophile Picolet](https://github.com/Theophile-Picolet)
+- **Développeur** : [Hervé Lorge](https://gitlab.com/hervelge)
+- **Développeur** : [Rahal Abdelghani](https://github.com/abdel92000)
 
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
