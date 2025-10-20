@@ -88,7 +88,6 @@ erDiagram
         string profile_path
         float popularity
         string known_for_department
-        string imdb_id
     }
 
     GENRE {
