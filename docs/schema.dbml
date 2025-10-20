@@ -45,7 +45,6 @@ Table actor {
   profile_path varchar(255)
   popularity float
   known_for_department varchar(255)
-  imdb_id varchar(50)
 }
 
 Table movie_genre {

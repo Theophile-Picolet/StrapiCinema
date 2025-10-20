@@ -1,5 +1,16 @@
 #  CineVerse - API Strapi Cinema
 
+[![CI](https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml">
+    <img src="https://github.com/Theophile-Picolet/StrapiCinema/actions/workflows/ci.yml/badge.svg?branch=dev" alt="CI Status" />
+  </a>
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D20.0.0-brightgreen?logo=nodedotjs&logoColor=white" alt="Node.js Version" />
+  <img src="https://img.shields.io/badge/Strapi-v4-blue?logo=strapi&logoColor=white" alt="Strapi Version" />
+  <img src="https://img.shields.io/badge/Build-ready-orange?logo=githubactions&logoColor=white" alt="Build Status" />
+</p>
+
+
 ## Contexte du projet
 
 ###  Formation CDA - Éco-conception
