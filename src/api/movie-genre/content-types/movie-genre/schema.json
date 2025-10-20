@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "movie_genres",
+  "info": {
+    "singularName": "movie-genre",
+    "pluralName": "movie-genres",
+    "displayName": "Movie_genre"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "genre": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::genre.genre",
+      "inversedBy": "movie_genres"
+    },
+    "movie": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::movie.movie",
+      "inversedBy": "movie_genres"
+    }
+  }
+}
