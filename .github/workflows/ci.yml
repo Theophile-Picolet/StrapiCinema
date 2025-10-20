@@ -50,6 +50,10 @@ jobs:
       #  Vérifie la qualité du code (ESLint)
       - name: Lint code
         run: npm run lint
+
+      # Corrige automatiquement les petits problèmes
+      - name: Auto fix lint issues
+        run: npm run lint:fix
       
       #  Build Strapi
       - name: Build Strapi project
