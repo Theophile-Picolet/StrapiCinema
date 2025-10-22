@@ -65,7 +65,8 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
   const response = await fetch(
     `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&query=${title}&language=fr-FR`
   );
-  const dataMovies = await response.json() as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+  const dataMovies = await response.json() as any 
 
 
 // Boucle pour chaque film trouvé
@@ -77,7 +78,8 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
     const responseMovie = await fetch(`https://api.themoviedb.org/3/movie/${dataMovies.results[i].id}?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`);
     
 // Pour chaque film je récupère les détails du film
-    const detailsMovie = await responseMovie.json() as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+    const detailsMovie = await responseMovie.json() as any 
     console.log('detailsMovie=>', detailsMovie);
     const runtime = detailsMovie.runtime;
 
@@ -86,7 +88,8 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
       `https://api.themoviedb.org/3/movie/${detailsMovie.id}/credits?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`
     );
 
-    const responseCredits = await requestCredits.json() as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+    const responseCredits = await requestCredits.json() as any 
     const crew = responseCredits.crew;
     const actors = responseCredits.cast;
     console.log(`nbr d'acteurs=>`, actors.length);
