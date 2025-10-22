@@ -2,8 +2,7 @@
  * movie controller
  */
 
-import { factories, UID } from '@strapi/strapi'
-import { Movie } from '../model'
+import { factories } from '@strapi/strapi'
 export default factories.createCoreController('api::movie.movie',({strapi}) => ({
 
   async find(ctx) {
@@ -111,7 +110,7 @@ const director = crew.find(actor => actor.job === "Director")?.name;
 // ajoute le film en base de données
 try {
   const movieCreated = await strapi.documents('api::movie.movie').create({ data: movieData });
-  const movieDocId = movieCreated.documentId;
+  // const movieDocId = movieCreated.documentId;
 
   const genres = detailsMovie.genres;
   console.log('genres du film=>', genres);
