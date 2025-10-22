@@ -248,3 +248,4 @@ Pour supprimer des relations incorrectes, utiliser l'interface admin Strapi ou l
 ## Conclusion
 
 Ce système d'importation offre une solution robuste et flexible pour synchroniser une base de données de films depuis TMDB vers Strapi, avec une gestion complète des relations et des genres. La prise en compte des spécificités de Strapi v5 garantit la compatibilité et la performance du système.
+

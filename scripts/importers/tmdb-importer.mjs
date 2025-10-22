@@ -274,7 +274,7 @@ async function linkMovieGenres(movieDocumentId, movie) {
 /******************************************************
  * acteurs : récupération/création et liaison film-acteur
  ******************************************************/
-async function getOrCreateActorByTmdbId(tmdbId, actorData) {
+async function getOrCreateActorByTmdbId(tmdbId) {
   const searchUrl = `${STRAPI_API_BASE}/actors?filters[tmdb_id][$eq]=${tmdbId}`;
   const headers = {
     'Authorization': `Bearer ${STRAPI_TOKEN}`,
@@ -396,7 +396,7 @@ async function linkMovieToActor(movieDocumentId, actorDocumentId, characterName,
 async function linkMovieActors(movieDocumentId, movie) {
   if (!Array.isArray(movie.credits?.cast) || movie.credits.cast.length === 0) return;
   
-  // Limiter aux 10 premiers acteurs pour éviter trop de données
+  //** Limiter aux 10 premiers acteurs pour éviter trop de données */
   const topActors = movie.credits.cast.slice(0, 10);
   
   for (let i = 0; i < topActors.length; i++) {
@@ -405,7 +405,7 @@ async function linkMovieActors(movieDocumentId, movie) {
     if (!actorName) continue;
     
     try {
-      const actorDocumentId = await getOrCreateActorByTmdbId(actor.id, actor);
+      const actorDocumentId = await getOrCreateActorByTmdbId(actor.id);
       await linkMovieToActor(movieDocumentId, actorDocumentId, actor.character, i);
       console.log(`   ↳ Acteur lié: ${actorName} (#${actorDocumentId})`);
     } catch (error_) {

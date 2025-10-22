@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 describe('Actor Schema Validation', () => {
-  let actorSchema: any;
+  let actorSchema: Record<string, unknown>;
 
   beforeAll(() => {
     // Charger le schéma Actor depuis le fichier JSON
@@ -29,13 +29,15 @@ describe('Actor Schema Validation', () => {
     });
 
     it('devrait avoir les informations correctes', () => {
-      expect(actorSchema.info.singularName).toBe('actor');
-      expect(actorSchema.info.pluralName).toBe('actors');
-      expect(actorSchema.info.displayName).toBe('Actor');
+      const info = actorSchema.info as Record<string, unknown>;
+      expect(info.singularName).toBe('actor');
+      expect(info.pluralName).toBe('actors');
+      expect(info.displayName).toBe('Actor');
     });
 
     it('devrait avoir draftAndPublish activé', () => {
-      expect(actorSchema.options.draftAndPublish).toBe(true);
+      const options = actorSchema.options as Record<string, unknown>;
+      expect(options.draftAndPublish).toBe(true);
     });
   });
 
@@ -57,32 +59,35 @@ describe('Actor Schema Validation', () => {
         'actors'
       ];
 
+      const attributes = actorSchema.attributes as Record<string, unknown>;
       for (const attr of expectedAttributes) {
-        expect(actorSchema.attributes).toHaveProperty(attr);
+        expect(attributes).toHaveProperty(attr);
       }
     });
 
     it('devrait avoir les bons types pour les attributs de base', () => {
-      expect(actorSchema.attributes.slug.type).toBe('uid');
-      expect(actorSchema.attributes.tmdb_id.type).toBe('integer');
-      expect(actorSchema.attributes.name.type).toBe('string');
-      expect(actorSchema.attributes.original_name.type).toBe('string');
-      expect(actorSchema.attributes.gender.type).toBe('integer');
-      expect(actorSchema.attributes.biography.type).toBe('string');
-      expect(actorSchema.attributes.birthday.type).toBe('date');
-      expect(actorSchema.attributes.deathday.type).toBe('date');
-      expect(actorSchema.attributes.place_of_birth.type).toBe('string');
-      expect(actorSchema.attributes.profile_path.type).toBe('string');
-      expect(actorSchema.attributes.popularity.type).toBe('integer');
-      expect(actorSchema.attributes.known_for_department.type).toBe('string');
+      const attributes = actorSchema.attributes as Record<string, Record<string, unknown>>;
+      expect(attributes.slug.type).toBe('uid');
+      expect(attributes.tmdb_id.type).toBe('integer');
+      expect(attributes.name.type).toBe('string');
+      expect(attributes.original_name.type).toBe('string');
+      expect(attributes.gender.type).toBe('integer');
+      expect(attributes.biography.type).toBe('string');
+      expect(attributes.birthday.type).toBe('date');
+      expect(attributes.deathday.type).toBe('date');
+      expect(attributes.place_of_birth.type).toBe('string');
+      expect(attributes.profile_path.type).toBe('string');
+      expect(attributes.popularity.type).toBe('integer');
+      expect(attributes.known_for_department.type).toBe('string');
     });
 
     it('devrait avoir les bonnes relations', () => {
+      const attributes = actorSchema.attributes as Record<string, Record<string, unknown>>;
       // Relation avec movie-actor
-      expect(actorSchema.attributes.actors.type).toBe('relation');
-      expect(actorSchema.attributes.actors.relation).toBe('oneToMany');
-      expect(actorSchema.attributes.actors.target).toBe('api::movie-actor.movie-actor');
-      expect(actorSchema.attributes.actors.mappedBy).toBe('actor');
+      expect(attributes.actors.type).toBe('relation');
+      expect(attributes.actors.relation).toBe('oneToMany');
+      expect(attributes.actors.target).toBe('api::movie-actor.movie-actor');
+      expect(attributes.actors.mappedBy).toBe('actor');
     });
   });
 
@@ -93,8 +98,9 @@ describe('Actor Schema Validation', () => {
 
     it('devrait avoir une structure cohérente', () => {
       // Vérifier que tous les attributs ont au moins un type
-      for (const attr of Object.keys(actorSchema.attributes)) {
-        expect(actorSchema.attributes[attr]).toHaveProperty('type');
+      const attributes = actorSchema.attributes as Record<string, Record<string, unknown>>;
+      for (const attr of Object.keys(attributes)) {
+        expect(attributes[attr]).toHaveProperty('type');
       }
     });
   });
@@ -116,9 +122,9 @@ describe('Actor Schema Validation', () => {
         known_for_department: "Acting"
       };
 
-      // Vérifier que tous les champs requis existent
+      const attributes = actorSchema.attributes as Record<string, unknown>;
       for (const field of Object.keys(validActor)) {
-        expect(actorSchema.attributes).toHaveProperty(field);
+        expect(attributes).toHaveProperty(field);
       }
     });
   });

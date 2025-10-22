@@ -7,7 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, '../.env.test') });
 // Simple setup for integration tests
 // Assumes Strapi is already running
 
-let app: any;
+let app: string;
 
 beforeAll(async () => {
   // Get Strapi URL from environment variable or default
@@ -18,4 +18,4 @@ beforeAll(async () => {
 }, 10000);
 
 // Make app available globally for tests
-(globalThis as any).strapi = { server: { httpServer: app } };
+(globalThis as Record<string, unknown>).strapi = { server: { httpServer: app } };
