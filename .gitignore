@@ -140,3 +140,7 @@ NOTES_PERSO.md
 # Règles Cursor personnelles (non versionnées)
 .cursorrules.user
 @.cursorrules.user
+
+# Fichiers d'environnement de test
+.env.test
+.env.example
