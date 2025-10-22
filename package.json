@@ -2,6 +2,7 @@
   "name": "strapi-cinema",
   "version": "0.1.0",
   "private": true,
+  "type": "commonjs",
   "description": "A Strapi application",
   "scripts": {
     "build": "strapi build",
@@ -28,6 +29,7 @@
     "better-sqlite3": "11.3.0",
     "fs-extra": "^10.0.0",
     "mime-types": "^2.1.27",
+    "node-fetch": "^3.3.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",

@@ -143,3 +143,4 @@ NOTES_PERSO.md
 
 # Fichiers d'environnement de test
 .env.test
+.env.example
