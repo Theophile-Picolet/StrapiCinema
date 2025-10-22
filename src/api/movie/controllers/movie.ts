@@ -57,7 +57,7 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
     return;
   }
 
-  if(existingMovie.length === 0 || existingMovie === null){ 
+  if(existingMovie.length === 0 ||existingMovie === null){ 
     console.log('pas de film trouvé dans la base de données');
   }
 
@@ -65,7 +65,7 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
   const response = await fetch(
     `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&query=${title}&language=fr-FR`
   );
-// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataMovies = await response.json() as any;
 
 
@@ -78,7 +78,7 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
     const responseMovie = await fetch(`https://api.themoviedb.org/3/movie/${dataMovies.results[i].id}?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`);
     
 // Pour chaque film je récupère les détails du film
-// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     const detailsMovie = await responseMovie.json() as any;
     console.log('detailsMovie=>', detailsMovie);
     const runtime = detailsMovie.runtime;
@@ -88,7 +88,7 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
       `https://api.themoviedb.org/3/movie/${detailsMovie.id}/credits?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`
     );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responseCredits = await requestCredits.json() as any;
     const crew = responseCredits.crew;
     const actors = responseCredits.cast;
