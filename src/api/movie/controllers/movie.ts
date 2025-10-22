@@ -2,6 +2,209 @@
  * movie controller
  */
 
-import { factories } from '@strapi/strapi'
+import { factories, UID } from '@strapi/strapi'
+import { Movie } from '../model'
+export default factories.createCoreController('api::movie.movie',({strapi}) => ({
 
-export default factories.createCoreController('api::movie.movie');
+  async find(ctx) {
+
+    // Récupère tous les films
+    const movies = await strapi.documents('api::movie.movie').findMany();
+
+    // renveoyer les films 
+    ctx.body = movies; 
+  },
+
+  async findOne(ctx) {
+    console.log('ctx.query.movieId=>', ctx.query.movieId);
+    
+    const movieId = ctx.params.id; 
+    
+    try {
+      const movie = await strapi.documents('api::movie.movie').findOne({
+        documentId: movieId
+      });
+      console.log('Movie found', movie);
+      ctx.body = movie;
+    } catch (error) {
+      console.log('Error', error);
+      ctx.throw(404, 'Movie not found');
+    }
+  },
+
+  async create(ctx) {
+    const movie = await strapi.documents('api::movie.movie').create({
+      data: ctx.request.body
+    });
+    ctx.body = movie;
+  },
+
+// methode pour rechercher un film par titre 
+  async fromTitle(ctx) {
+  const title = ctx.query.title;
+  console.log('title=>', title);
+  if (!title) {
+    ctx.badRequest("Le paramètre 'title' est manquant.");
+    return;
+  }
+
+  const existingMovie = await strapi.documents("api::movie.movie").findMany({
+    filters: { title: title },
+  });
+
+  if (existingMovie.length > 0) {
+    console.log('existingMovie=>', existingMovie);
+    ctx.body = existingMovie;
+    return;
+  }
+
+  if(existingMovie.length === 0 || existingMovie === null){ 
+    console.log('pas de film trouvé dans la base de données');
+  }
+
+  //  Chercher le film sur l’API TMDB
+  const response = await fetch(
+    `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&query=${title}&language=fr-FR`
+  );
+  const dataMovies = await response.json() as any;
+
+
+// Boucle pour chaque film trouvé
+  for(let i = 0; i < dataMovies.results.length; i++){
+    console.log('film trouvé =>', dataMovies.results[i].title);
+// pour chaque film je récupère les détails
+
+// je récupère 1 film par 1 par la boucle for
+    const responseMovie = await fetch(`https://api.themoviedb.org/3/movie/${dataMovies.results[i].id}?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`);
+    
+// Pour chaque film je récupère les détails du film
+    const detailsMovie = await responseMovie.json() as any;
+    console.log('detailsMovie=>', detailsMovie);
+    const runtime = detailsMovie.runtime;
+
+//  Pour chaque film je récupère les détails des acteurs
+    const requestCredits = await fetch(
+      `https://api.themoviedb.org/3/movie/${detailsMovie.id}/credits?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`
+    );
+
+    const responseCredits = await requestCredits.json() as any;
+    const crew = responseCredits.crew;
+    const actors = responseCredits.cast;
+    console.log(`nbr d'acteurs=>`, actors.length);
+ 
+// On cherche la première personne du crew dont le métier est "Director"
+const director = crew.find(actor => actor.job === "Director")?.name;
+
+    const movieData = {
+      tmdb_id: dataMovies.results[i].id,           
+      title: dataMovies.results[i].title,             
+      description: dataMovies.results[i].overview,      
+      release_date: dataMovies.results[i].release_date,      
+      director: director,         
+      runtime:runtime,            
+      poster_path: dataMovies.results[i].poster_path,      
+      backdrop_path: dataMovies.results[i].backdrop_path,     
+      vote_average: dataMovies.results[i].vote_average,      
+      vote_count: dataMovies.results[i].vote_count,        
+    };
+
+// ajoute le film en base de données
+try {
+  const movieCreated = await strapi.documents('api::movie.movie').create({ data: movieData });
+  const movieDocId = movieCreated.documentId;
+
+  const genres = detailsMovie.genres;
+  console.log('genres du film=>', genres);
+
+// ajoute le cast du film en base de données
+  for(let k = 0; k < actors.length; k++){
+    // avant de cree lacteur tcheker si il existe deja dans la base de données
+    const actorCreated = await strapi.documents('api::actor.actor').create({
+      data: {
+        tmdb_id: actors[k].id,
+        name: actors[k].name,
+        original_name: actors[k].original_name,
+        gender: actors[k].gender,
+        biography: actors[k].biography,
+        birthday: actors[k].birthday,
+        deathday: actors[k].deathday,
+        place_of_birth: actors[k].place_of_birth,
+        profile_path: actors[k].profile_path,
+        popularity: actors[k].popularity,
+        known_for_department: actors[k].known_for_department,
+      },
+    });
+
+    const movieCastCreated = await strapi.documents('api::movie-actor.movie-actor').create({
+      data: { movie: movieCreated.id, actor: actorCreated.id, character_name: actors[k].character, order_index: actors[k].order }
+    });
+    console.log('movieCastCreated=>', movieCastCreated);
+  }
+
+
+// ajoute le genre du film en base de données
+  const movieGenreCreated = await strapi.documents('api::movie-genre.movie-genre').create({
+    data: { movie: movieCreated.id, genre: genres.name }
+  });
+
+  if(!movieGenreCreated){
+    console.log('genre non ajouté dans la base de données');
+    return
+  }
+
+  console.log('genre ajouté dans la base de données',movieGenreCreated);
+
+  
+} catch (error) {
+console.log('error=>', error.message.toString());
+return
+}
+return
+}
+
+},
+
+async delete(ctx) {
+  const movieId = ctx.params.id;
+  try {
+    const deletedMovie = await strapi.documents('api::movie.movie').delete({
+      documentId: movieId
+    });
+    ctx.body = { message: 'Film supprimé avec succès', movie: deletedMovie };
+  } catch (error) {
+    console.error('Erreur lors de la suppression du film:', error);
+    ctx.throw(500, 'Erreur lors de la suppression du film');
+  }
+},
+
+// Fonction pour supprimer tous les films
+async deleteAll(ctx) {
+  try {
+    // Récupérer tous les films
+    const allMovies = await strapi.documents('api::movie.movie').findMany();
+    
+    if (allMovies.length === 0) {
+      ctx.body = { message: 'Aucun film à supprimer' };
+      return;
+    }
+
+    // Supprimer tous les films
+    const deletedMovies = [];
+    for (const movie of allMovies) {
+      await strapi.documents('api::movie.movie').delete({
+        documentId: movie.documentId
+      });
+      deletedMovies.push(movie.title);
+    }
+
+    ctx.body = { 
+      message: `${deletedMovies.length} films supprimés avec succès`,
+      deletedMovies: deletedMovies
+    };
+  } catch (error) {
+    console.error('Erreur lors de la suppression des films:', error);
+    ctx.throw(500, 'Erreur lors de la suppression des films');
+  }
+},
+
+}));

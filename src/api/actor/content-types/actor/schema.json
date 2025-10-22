@@ -42,7 +42,7 @@
       "type": "string"
     },
     "popularity": {
-      "type": "integer"
+      "type": "decimal"
     },
     "known_for_department": {
       "type": "string"

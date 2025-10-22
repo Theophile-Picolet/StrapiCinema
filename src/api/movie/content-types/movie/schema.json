@@ -36,7 +36,7 @@
       "type": "string"
     },
     "vote_average": {
-      "type": "integer"
+      "type": "decimal"
     },
     "vote_count": {
       "type": "integer"
@@ -55,6 +55,9 @@
     },
     "slug": {
       "type": "uid"
+    },
+    "tmdb_id": {
+      "type": "integer"
     }
   }
 }
