@@ -8,5 +8,13 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/movie-actors/movie/:movieId',
+      handler: 'movie-actor.findByMovie',
+      config: {
+        auth: false,
+      },
+    },
   ],
 };
