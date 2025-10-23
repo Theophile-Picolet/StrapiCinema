@@ -18,6 +18,17 @@ export default factories.createCoreController('api::movie-actor.movie-actor',({s
     ctx.body = movieActors;
   },
 
+  async findByMovie(ctx) {
+    const { movieId } = ctx.params;
+    const movieActors = await strapi.documents('api::movie-actor.movie-actor').findMany({
+      filters: { movie: { documentId: movieId } },
+      populate: ['actor']
+    });
+    
+    ctx.status = 200;
+    ctx.body = movieActors;
+  },
+
   // Récupère un casting par son documentId
   async findOne(ctx) {
     const { id } = ctx.params;
