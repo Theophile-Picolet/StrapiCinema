@@ -8,9 +8,23 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
   async find(ctx) {
 
     // Récupère tous les films
-    const movies = await strapi.documents('api::movie.movie').findMany();
+    // const movies = await strapi.documents('api::movie.movie').findMany();
 
+    // pour chauqe film je retourne le genre du film 
+  
     // renveoyer les films 
+    
+    const movies = await strapi
+    .documents('api::movie.movie')
+    .findMany({
+      populate: {
+        movie_genres: {
+          populate: {
+            genre: true
+          }
+        }
+      }
+    });
     ctx.body = movies; 
   },
 
@@ -86,10 +100,32 @@ export default factories.createCoreController('api::movie.movie',({strapi}) => (
     // si il existe un film dnas notre db on recuepre le id document et on renvoie le film 
     const moiveid = existingMovie[0].documentId;
     const movie = await strapi.documents('api::movie.movie').findOne({
-      documentId: moiveid
+      documentId: moiveid,
+      populate: {
+        movie_genres: {
+          populate: {
+            genre: true
+          }
+        },
+        movies: {
+          populate: {
+            actor: true
+          }
+        }
+      }
     });
 
-    ctx.body = movie;
+    const movieWithGenreNames = {
+      ...movie,
+      movie_genres: movie.movie_genres.map(movieGenre => ({
+        id: movieGenre.id,
+        documentId: movieGenre.documentId,
+        genre_name: movieGenre.genre.name
+      }
+    ))
+    };
+
+    ctx.body = movieWithGenreNames;
     return;
   }
 
