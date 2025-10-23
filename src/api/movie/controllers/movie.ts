@@ -217,7 +217,7 @@ try {
         birthday: actors[k].birthday,
         deathday: actors[k].deathday,
         place_of_birth: actors[k].place_of_birth,
-        profile_path: actors[k].profile_path,
+        profile_path: actors[k].profile_path ? `https://image.tmdb.org/t/p/w500${actors[k].profile_path}` : null,
         popularity: actors[k].popularity,
         known_for_department: actors[k].known_for_department,
       },
