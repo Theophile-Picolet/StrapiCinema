@@ -186,7 +186,7 @@ const director = crew.find(actor => actor.job === "Director")?.name;
       release_date: dataMovies.results[i].release_date,      
       director: director,         
       runtime:runtime,            
-      poster_path: dataMovies.results[i].poster_path,      
+      poster_path: dataMovies.results[i].poster_path ? `https://image.tmdb.org/t/p/w500${dataMovies.results[i].poster_path}` : null,      
       backdrop_path: dataMovies.results[i].backdrop_path ? `https://image.tmdb.org/t/p/original${dataMovies.results[i].backdrop_path}` : null,     
       vote_average: dataMovies.results[i].vote_average,      
       vote_count: dataMovies.results[i].vote_count,        
