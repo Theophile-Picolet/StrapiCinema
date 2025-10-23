@@ -629,7 +629,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     singularName: 'movie';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     backdrop_path: Schema.Attribute.String;

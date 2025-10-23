@@ -41,7 +41,8 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  ******************************************************/
 async function checkMovieExists(tmdbId) {
   try {
-    const response = await fetch(`${STRAPI_URL}?filters[tmdb_id][$eq]=${tmdbId}`, {
+    // Récupérer tous les films et vérifier manuellement
+    const response = await fetch(STRAPI_URL, {
       headers: {
         'Authorization': `Bearer ${STRAPI_TOKEN}`,
         'Content-Type': 'application/json'
@@ -49,11 +50,21 @@ async function checkMovieExists(tmdbId) {
     });
 
     if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status}`);
+      console.error(` Erreur HTTP lors de la vérification: ${response.status}`);
+      return false;
     }
 
     const data = await response.json();
-    return data?.data?.length > 0;
+    const movies = Array.isArray(data) ? data : [];
+    
+    // Debug: afficher les tmdb_id trouvés
+    const foundTmdbIds = movies.map(m => m.tmdb_id).filter(id => id !== null && id !== undefined);
+    console.log(` Films trouvés avec tmdb_id: [${foundTmdbIds.join(', ')}]`);
+    
+    // Chercher un film avec le même tmdb_id
+    const exists = movies.some(movie => movie.tmdb_id === tmdbId);
+    console.log(` Vérification film ID ${tmdbId}: ${exists ? 'EXISTE' : 'N\'EXISTE PAS'}`);
+    return exists;
   } catch (error) {
     console.error(` Erreur lors de la vérification du film ID ${tmdbId}:`, error.message);
     return false;
@@ -154,7 +165,6 @@ function prepareMovieData(movie, director) {
       : null,
     vote_average: Math.round(movie.vote_average),
     vote_count: movie.vote_count || 0,
-    slug: createSlug(movie.title),
     tmdb_id: movie.id,
   };
 }
@@ -164,13 +174,15 @@ function prepareMovieData(movie, director) {
  ******************************************************/
 async function importMovieToStrapi(movieData) {
   try {
+    console.log('Données envoyées à Strapi:', JSON.stringify({ data: movieData }, null, 2));
+    
     const response = await fetch(STRAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${STRAPI_TOKEN}`,
       },
-      body: JSON.stringify({ data: movieData }),
+      body: JSON.stringify(movieData),
     });
 
     if (!response.ok) {
@@ -179,7 +191,21 @@ async function importMovieToStrapi(movieData) {
     }
 
     const result = await response.json();
-    return result?.data?.documentId;    
+    console.log('Réponse Strapi:', JSON.stringify(result, null, 2));
+    
+    // Essayer différentes propriétés possibles pour l'ID
+    const movieId = result?.data?.documentId || 
+                    result?.data?.id || 
+                    result?.data?.documentId || 
+                    result?.documentId || 
+                    result?.id;
+    
+    if (!movieId) {
+      console.error('Aucun ID trouvé dans la réponse Strapi:', result);
+      throw new Error('Impossible de récupérer l\'ID du film créé');
+    }
+    
+    return movieId;    
   } catch (error) {
     console.error(` Erreur lors de l'import dans Strapi:`, error.message);
     throw error;
@@ -244,9 +270,8 @@ async function linkMovieToGenre(movieDocumentId, genreDocumentId) {
     headers,
     body: JSON.stringify({
       data: {
-        "movie": { "connect": [ { "documentId": movieDocumentId } ] },
-        "genre": { "connect": [ { "documentId": genreDocumentId } ] }
-
+        movie: { connect: [{ documentId: movieDocumentId }] },
+        genre: { connect: [{ documentId: genreDocumentId }] }
       }
     })
   });
@@ -257,6 +282,11 @@ async function linkMovieToGenre(movieDocumentId, genreDocumentId) {
 }
 
 async function linkMovieGenres(movieDocumentId, movie) {
+  if (!movieDocumentId) {
+    console.error('   ↳ Erreur: ID du film manquant pour la liaison des genres');
+    return;
+  }
+  
   if (!Array.isArray(movie.genres) || movie.genres.length === 0) return;
   for (const g of movie.genres) {
     const genreName = g.name?.trim();
@@ -394,6 +424,11 @@ async function linkMovieToActor(movieDocumentId, actorDocumentId, characterName,
 }
 
 async function linkMovieActors(movieDocumentId, movie) {
+  if (!movieDocumentId) {
+    console.error('   ↳ Erreur: ID du film manquant pour la liaison des acteurs');
+    return;
+  }
+  
   if (!Array.isArray(movie.credits?.cast) || movie.credits.cast.length === 0) return;
   
   //** Limiter aux 10 premiers acteurs pour éviter trop de données */
@@ -424,7 +459,6 @@ function logMovieData(title, data) {
   console.log(`   - Date de sortie: ${data.release_date}`);
   console.log(`   - Durée: ${data.runtime} min`);
   console.log(`   - Note: ${data.vote_average}/10`);
-  console.log(`   - Slug: ${data.slug}`);
   console.log(`   - TMDB ID: ${data.tmdb_id}`);
 }
 
@@ -462,6 +496,11 @@ async function processMovie(id) {
 
   const movieId = await importMovieToStrapi(strapiData);
   console.log(` Film "${movie.title}" importé avec ID ${movieId}`);
+
+  if (!movieId) {
+    console.error(` Erreur: Impossible de récupérer l'ID du film "${movie.title}"`);
+    return { imported: 0, skipped: 0, errors: 1 };
+  }
 
   await linkMovieGenres(movieId, movie);
   await linkMovieActors(movieId, movie);
